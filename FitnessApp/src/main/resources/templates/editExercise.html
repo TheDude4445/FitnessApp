@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Exercise</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: 50px auto;
+            padding: 30px;
+            background-color: #fff;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        input[type="text"], input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .error-message {
+            color: red;
+            font-size: 14px;
+        }
+
+        button {
+            padding: 12px 30px;
+            background-color: #4CAF50;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Edit Exercise</h1>
+        <form id="editExerciseForm" th:action="@{/editExercise/{id}(id=${exercise.id})}" method="post" onsubmit="return validateEditForm()">
+            <input type="hidden" name="_method" value="put">
+            <div class="form-group">
+                <label for="name">Exercise Name:</label>
+                <input type="text" id="name" name="name" th:value="${exercise.name}" required>
+                <div id="nameError" class="error-message" style="display: none;">Exercise name is required.</div>
+            </div>
+            <div class="form-group">
+                <label for="description">Description:</label>
+                <input type="text" id="description" name="description" th:value="${exercise.description}" required>
+                <div id="descriptionError" class="error-message" style="display: none;">Description is required.</div>
+            </div>
+            <div class="form-group">
+                <label for="reps">Reps:</label>
+                <input type="number" id="reps" name="reps" th:value="${exercise.reps}" required>
+                <div id="repsError" class="error-message" style="display: none;">Please enter a valid number for reps.</div>
+            </div>
+            <div class="form-group">
+                <label for="sets">Sets:</label>
+                <input type="number" id="sets" name="sets" th:value="${exercise.sets}" required>
+                <div id="setsError" class="error-message" style="display: none;">Please enter a valid number for sets.</div>
+            </div>
+            <button type="submit">Update Exercise</button>
+        </form>
+    </div>
+
+    <script>
+        function validateEditForm() {
+            var isValid = true;
+            var name = document.getElementById('name').value;
+            var description = document.getElementById('description').value;
+            var reps = document.getElementById('reps').value;
+            var sets = document.getElementById('sets').value;
+
+            if (!name) {
+                document.getElementById('nameError').style.display = 'block';
+                isValid = false;
+            } else {
+                document.getElementById('nameError').style.display = 'none';
+            }
+
+            if (!description) {
+                document.getElementById('descriptionError').style.display = 'block';
+                isValid = false;
+            } else {
+                document.getElementById('descriptionError').style.display = 'none';
+            }
+
+            if (isNaN(reps) || reps === '') {
+                document.getElementById('repsError').style.display = 'block';
+                isValid = false;
+            } else {
+                document.getElementById('repsError').style.display = 'none';
+            }
+
+            if (isNaN(sets) || sets === '') {
+                document.getElementById('setsError').style.display = 'block';
+                isValid = false;
+            } else {
+                document.getElementById('setsError').style.display = 'none';
+            }
+
+            return isValid;
+        }
+    </script>
+</body>
+</html>
