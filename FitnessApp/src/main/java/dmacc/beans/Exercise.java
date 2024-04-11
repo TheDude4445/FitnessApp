@@ -12,12 +12,14 @@ public class Exercise {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
+    private String type;
     private String description;
     private int reps;
     private int sets;
 
-    public Exercise(String name, String description, int reps, int sets) {
+    public Exercise(String name, String type, String description, int reps, int sets) {
         this.name = name;
+        this.type = type;
         this.description = description;
         this.reps = reps;
         this.sets = sets;
@@ -43,7 +45,15 @@ public class Exercise {
     public void setName(String name) {
         this.name = name;
     }
+    
+    public String getType() {
+    	return type;
+    }
 
+    public void setType(String type) {
+    	this.type = type;
+    }
+    
     public String getDescription() {
         return description;
     }

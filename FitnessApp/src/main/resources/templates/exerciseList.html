@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>List of Exercises</title>
+    <title>Workouts</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -93,13 +93,14 @@
 </head>
 <body>
     <div class="container">
-        <h1>List of Exercises</h1>
+        <h1>Workouts</h1>
         <a class="home-btn" href="/">Home</a>
         <table>
             <thead>
                 <tr>
                     <th>ID</th>
                     <th>Name</th>
+                    <th>Type</th>
                     <th>Description</th>
                     <th>Reps</th>
                     <th>Sets</th>
@@ -110,6 +111,7 @@
                 <tr th:each="exercise : ${exercises}">
                     <td th:text="${exercise.id}"></td>
                     <td th:text="${exercise.name}"></td>
+                    <td th:text="${exercise.type}"></td>
                     <td th:text="${exercise.description}"></td>
                     <td th:text="${exercise.reps}"></td>
                     <td th:text="${exercise.sets}"></td>
