@@ -36,6 +36,7 @@
             padding: 12px 15px;
             border-bottom: 1px solid #ddd;
             text-align: left;
+            cursor: pointer;
         }
 
         th {
@@ -95,16 +96,17 @@
     <div class="container">
         <h1>List of Nutritions</h1>
         <a class="home-btn" href="/">Home</a>
-        <table>
+        <a class="home-btn" href="/addNutrition">Add Nutrition</a>
+        <table id="nutritionTable">
             <thead>
                 <tr>
-                    <th>ID</th>
-                    <th>Name</th>
-                    <th>Description</th>
-                    <th>Calories</th>
-                    <th>Protein Grams</th>
-                    <th>Carbs Grams</th>
-                    <th>Fat Grams</th>
+                    <th onclick="sortTable(0)">ID</th>
+                    <th onclick="sortTable(1)">Name</th>
+                    <th onclick="sortTable(2)">Description</th>
+                    <th onclick="sortTable(3)">Calories</th>
+                    <th onclick="sortTable(4)">Protein Grams</th>
+                    <th onclick="sortTable(5)">Carbs Grams</th>
+                    <th onclick="sortTable(6)">Fat Grams</th>
                     <th>Action</th>
                 </tr>
             </thead>
@@ -130,5 +132,42 @@
             </tbody>
         </table>
     </div>
+
+    <script>
+    function sortTable(columnIndex) {
+        var table, rows, switching, i, x, y, shouldSwitch;
+        table = document.getElementById("nutritionTable");
+        switching = true;
+        while (switching) {
+            switching = false;
+            rows = table.rows;
+            for (i = 1; i < (rows.length - 1); i++) {
+                shouldSwitch = false;
+                x = rows[i].getElementsByTagName("td")[columnIndex];
+                y = rows[i + 1].getElementsByTagName("td")[columnIndex];
+                // Parse inner HTML to numbers for numeric columns
+                var xValue = parseFloat(x.innerHTML);
+                var yValue = parseFloat(y.innerHTML);
+                if (isNaN(xValue) || isNaN(yValue)) {
+                    // If parsing fails, compare as strings
+                    if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+                        shouldSwitch = true;
+                        break;
+                    }
+                } else {
+                    // Compare numeric values in descending order
+                    if (xValue < yValue) {
+                        shouldSwitch = true;
+                        break;
+                    }
+                }
+            }
+            if (shouldSwitch) {
+                rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+                switching = true;
+            }
+        }
+    }
+    </script>
 </body>
 </html>
