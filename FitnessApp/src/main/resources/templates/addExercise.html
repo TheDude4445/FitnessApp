@@ -64,6 +64,19 @@
         button:hover {
             background-color: #45a049;
         }
+        
+        .home-btn {
+            display: block;
+            width: 100px;
+            margin: 20px auto;
+            padding: 8px 12px;
+            border-radius: 5px;
+            background-color: #007bff;
+            color: #fff;
+            text-align: center;
+            text-decoration: none;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
@@ -75,6 +88,16 @@
                 <input type="text" id="name" name="name" th:value="${exercise.name}" required>
                 <div id="nameError" class="error-message" style="display: none;">Exercise name is required.</div>
             </div>
+            <div class="form-group">
+			    <label for="type">Workout Type:</label>
+			    <select id="type" name="type" th:field="${exercise.type}" required>
+			        <option value="">Select Workout Type</option>
+			        <option value="cardio">Cardio</option>
+			        <option value="strength training">Strength Training</option>
+			        <option value="other">Other</option>
+			    </select>
+			    <div id="typeError" class="error-message" style="display: none;">Workout type is required.</div>
+			</div>
             <div class="form-group">
                 <label for="description">Description:</label>
                 <input type="text" id="description" name="description" th:value="${exercise.description}" required>
@@ -90,8 +113,9 @@
                 <input type="number" id="sets" name="sets" th:value="${exercise.sets}" required>
                 <div id="setsError" class="error-message" style="display: none;">Please enter a valid number for sets.</div>
             </div>
-            <button type="submit">Add Exercise</button>
+            <button type="submit">Add Exercise</button> 
         </form>
+        <a class="home-btn" href="/">Home</a>
     </div>
 
     <script>
@@ -114,6 +138,13 @@
                 isValid = false;
             } else {
                 document.getElementById('descriptionError').style.display = 'none';
+            }
+            
+            if (!type) {
+                document.getElementById('typeError').style.display = 'block';
+                isValid = false;
+            } else {
+                document.getElementById('typeError').style.display = 'none';
             }
 
             if (isNaN(reps) || reps === '') {

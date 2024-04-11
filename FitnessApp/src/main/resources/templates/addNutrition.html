@@ -65,11 +65,24 @@
         button:hover {
             background-color: #45a049;
         }
+        
+        .home-btn {
+            display: block;
+            width: 100px;
+            margin: 20px auto;
+            padding: 8px 12px;
+            border-radius: 5px;
+            background-color: #007bff;
+            color: #fff;
+            text-align: center;
+            text-decoration: none;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Add Nutrition</h1>
+        <h1>Add Meal</h1>
         <form id="nutritionForm" action="/addNutrition" method="post" onsubmit="return validateForm()">
             <div class="form-group">
                 <label for="name">Name:</label>
@@ -101,8 +114,9 @@
                 <input type="number" id="fatGrams" name="fatGrams" required>
                 <div id="fatGramsError" class="error-message" style="display: none;">Please enter a valid integer for fat grams.</div>
             </div>
-            <button type="submit">Add Nutrition</button>
+            <button type="submit">Add Meal</button>
         </form>
+        <a class="home-btn" href="/">Home</a>
     </div>
 
     <script>
