@@ -76,6 +76,16 @@
                 <div id="nameError" class="error-message" style="display: none;">Exercise name is required.</div>
             </div>
             <div class="form-group">
+			    <label for="type">Workout Type:</label>
+			    <select id="type" name="type" th:field="${exercise.type}" required>
+			        <option value="">Select Workout Type</option>
+			        <option value="cardio">Cardio</option>
+			        <option value="strength training">Strength Training</option>
+			        <option value="other">Other</option>
+			    </select>
+			    <div id="typeError" class="error-message" style="display: none;">Workout type is required.</div>
+			</div>
+            <div class="form-group">
                 <label for="description">Description:</label>
                 <input type="text" id="description" name="description" th:value="${exercise.description}" required>
                 <div id="descriptionError" class="error-message" style="display: none;">Description is required.</div>
@@ -114,6 +124,13 @@
                 isValid = false;
             } else {
                 document.getElementById('descriptionError').style.display = 'none';
+            }
+            
+            if (!type) {
+                document.getElementById('typeError').style.display = 'block';
+                isValid = false;
+            } else {
+                document.getElementById('typeError').style.display = 'none';
             }
 
             if (isNaN(reps) || reps === '') {
