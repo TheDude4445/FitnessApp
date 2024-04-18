@@ -112,4 +112,9 @@ public class FitnessController {
         exerciseRepository.deleteById(id);
         return "redirect:/exerciseList";
     }
+    
+    @GetMapping("/workouts")
+    public String showWorkoutsPage(Model model) {
+        return "workouts";
+    }
 }
