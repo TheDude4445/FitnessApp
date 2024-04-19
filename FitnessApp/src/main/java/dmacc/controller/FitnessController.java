@@ -1,9 +1,11 @@
 package dmacc.controller;
 
+import dmacc.beans.Client;
 import dmacc.beans.Exercise;
 import dmacc.beans.Nutrition;
 import dmacc.repository.ExerciseRepository;
 import dmacc.repository.NutritionRepository;
+import dmacc.repository.ClientRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -17,6 +19,9 @@ public class FitnessController {
 
     @Autowired
     private NutritionRepository nutritionRepository;
+    
+    @Autowired
+    private ClientRepository clientRepository;
 
     @GetMapping("/")
     public String index(Model model) {
@@ -113,8 +118,47 @@ public class FitnessController {
         return "redirect:/exerciseList";
     }
     
-    @GetMapping("/workouts")
-    public String showWorkoutsPage(Model model) {
-        return "workouts";
+    @GetMapping("/addClient")
+    public String showAddClientForm(Model model) {
+        model.addAttribute("client", new Client());
+        return "addClient"; 
     }
+
+    @PostMapping("/addClient")
+    public String addClient(@ModelAttribute Client client) {
+        clientRepository.save(client);
+        return "redirect:/clientList";
+    }
+
+    @GetMapping("/editClient/{id}")
+    public String showEditClientForm(@PathVariable Long id, Model model) {
+        Client client = clientRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid client Id:" + id));
+        model.addAttribute("client", client);
+        return "editClient";
+    }
+
+    @PostMapping("/editClient/{id}")
+    public String editClient(@PathVariable Long id, @ModelAttribute Client clientDetails) {
+        Client client = clientRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid client Id:" + id));
+        client.setName(clientDetails.getName());
+        client.setEmail(clientDetails.getEmail());
+        client.setPhoneNumber(clientDetails.getPhoneNumber());
+        clientRepository.save(client);
+        return "redirect:/clientList";
+    }
+
+    @GetMapping("/clientList")
+    public String showClientList(Model model) {
+        model.addAttribute("clients", clientRepository.findAll());
+        return "clientList";
+    }
+
+    @PostMapping("/deleteClient/{id}")
+    public String deleteClient(@PathVariable Long id) {
+        clientRepository.deleteById(id);
+        return "redirect:/clientList";
+    }
+    
 }
