@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Client</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: 50px auto;
+            padding: 30px;
+            background-color: #fff;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        input[type="text"], input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .error-message {
+            color: red;
+            font-size: 14px;
+        }
+
+        button {
+            padding: 12px 30px;
+            background-color: #4CAF50;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Edit Client</h1>
+        <form id="editClientForm" th:action="@{/editClient/{id}(id=${client.id})}" method="post" onsubmit="return validateEditForm()">
+            <input type="hidden" name="_method" value="put">
+            <div class="form-group">
+                <label for="name">Client Name:</label>
+                <input type="text" id="name" name="name" th:value="${client.name}" required>
+                <div id="nameError" class="error-message" style="display: none;">Client name is required.</div>
+            </div>
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="text" id="email" name="email" th:value="${client.email}" required>
+                <div id="emailError" class="error-message" style="display: none;">Email is required.</div>
+            </div>
+            <div class="form-group">
+                <label for="phoneNumber">Phone Number:</label>
+                <input type="text" id="phoneNumber" name="phoneNumber" th:value="${client.phoneNumber}" required>
+                <div id="phoneNumberError" class="error-message" style="display: none;">Phone number is required.</div>
+            </div>
+            <button type="submit">Update Client</button>
+        </form>
+    </div>
+
+    <script>
+        function validateEditForm() {
+            var isValid = true;
+            var name = document.getElementById('name').value;
+            var email = document.getElementById('email').value;
+            var phoneNumber = document.getElementById('phoneNumber').value;
+
+            if (!name) {
+                document.getElementById('nameError').style.display = 'block';
+                isValid = false;
+            } else {
+                document.getElementById('nameError').style.display = 'none';
+            }
+
+            if (!email) {
+                document.getElementById('emailError').style.display = 'block';
+                isValid = false;
+            } else {
+                document.getElementById('emailError').style.display = 'none';
+            }
+
+            if (!phoneNumber) {
+                document.getElementById('phoneNumberError').style.display = 'block';
+                isValid = false;
+            } else {
+                document.getElementById('phoneNumberError').style.display = 'none';
+            }
+
+            return isValid;
+        }
+    </script>
+</body>
+</html>
