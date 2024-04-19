@@ -1,90 +1,115 @@
 package dmacc.beans;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import java.util.List;
+
+import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 
 @Data
 @NoArgsConstructor
 @Entity
 public class Client {
-	@Id
+    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
     private String email;
     private String phoneNumber;
     
-    public Client(String name, String email, String phoneNumber) {
-    	this.name = name;
-    	this.email = email;
-    	this.phoneNumber = phoneNumber;
-    	
-    }
+    @OneToMany(mappedBy = "client", cascade = CascadeType.ALL)
+    private List<Exercise> exercises;
     
+    @OneToMany(mappedBy = "client", cascade = CascadeType.ALL)
+    private List<Nutrition> nutrition;
+
+    @OneToMany(mappedBy = "client", cascade = CascadeType.ALL)
+    private List<WeightBMI> BMI;
+
     public Client() {
-    	
     }
-    
-    /**
-	 * @return the id
-	 */
-	public Long getId() {
-		return id;
-	}
 
-	/**
-	 * @param id the id to set
-	 */
-	public void setId(Long id) {
-		this.id = id;
-	}
+    public Client(String name, String email, String phoneNumber) {
+        this.name = name;
+        this.email = email;
+        this.phoneNumber = phoneNumber;
+    }
 
-	/**
-	 * @return the name
-	 */
-	public String getName() {
-		return name;
-	}
+    public Client(String name, String email, String phoneNumber, List<Exercise> exercises, List<Nutrition> nutrition, List<WeightBMI> BMI) {
+        this.name = name;
+        this.email = email;
+        this.phoneNumber = phoneNumber;
+        this.exercises = exercises;
+        this.nutrition = nutrition;
+        this.BMI = BMI;
+    }
 
-	/**
-	 * @param name the name to set
-	 */
-	public void setName(String name) {
-		this.name = name;
-	}
+    public Long getId() {
+        return id;
+    }
 
-	/**
-	 * @return the email
-	 */
-	public String getEmail() {
-		return email;
-	}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	/**
-	 * @param email the email to set
-	 */
-	public void setEmail(String email) {
-		this.email = email;
-	}
+    public String getName() {
+        return name;
+    }
 
-	/**
-	 * @return the phoneNumber
-	 */
-	public String getPhoneNumber() {
-		return phoneNumber;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	/**
-	 * @param phoneNumber the phoneNumber to set
-	 */
-	public void setPhoneNumber(String phoneNumber) {
-		this.phoneNumber = phoneNumber;
-	}
+    public String getEmail() {
+        return email;
+    }
 
-	
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    public List<Exercise> getExercises() {
+        return exercises;
+    }
+
+    public void setExercises(List<Exercise> exercises) {
+        this.exercises = exercises;
+    }
+
+    public List<Nutrition> getNutrition() {
+        return nutrition;
+    }
+
+    public void setNutrition(List<Nutrition> nutrition) {
+        this.nutrition = nutrition;
+    }
+
+    public List<WeightBMI> getBMI() {
+        return BMI;
+    }
+
+    public void setBMI(List<WeightBMI> BMI) {
+        this.BMI = BMI;
+    }
+
+    @Override
+    public String toString() {
+        return "Client{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", email='" + email + '\'' +
+                ", phoneNumber='" + phoneNumber + '\'' +
+                ", exercises=" + exercises +
+                ", nutrition=" + nutrition +
+                ", BMI=" + BMI +
+                '}';
+    }
 }

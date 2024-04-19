@@ -56,6 +56,7 @@ public class FitnessController {
         exercise.setDescription(exerciseDetails.getDescription());
         exercise.setReps(exerciseDetails.getReps());
         exercise.setSets(exerciseDetails.getSets());
+        exercise.setType(exerciseDetails.getType());
         exerciseRepository.save(exercise);
         return "redirect:/exerciseList";
     }

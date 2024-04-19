@@ -17,6 +17,9 @@ public class Nutrition {
     private int proteinGrams;
     private int carbsGrams;
     private int fatGrams;
+    @ManyToOne
+    @JoinColumn(name = "client_id")
+    private Client client;
 
     public Nutrition(String name, String description, int calories, int proteinGrams, int carbsGrams, int fatGrams) {
         this.name = name;

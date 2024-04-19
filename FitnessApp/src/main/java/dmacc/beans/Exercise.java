@@ -16,6 +16,9 @@ public class Exercise {
     private String description;
     private int reps;
     private int sets;
+    @ManyToOne
+    @JoinColumn(name = "client_id")
+    private Client client;
 
     public Exercise(String name, String type, String description, int reps, int sets) {
         this.name = name;
