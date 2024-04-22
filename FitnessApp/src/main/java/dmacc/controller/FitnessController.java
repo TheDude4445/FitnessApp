@@ -3,8 +3,10 @@ package dmacc.controller;
 import dmacc.beans.Client;
 import dmacc.beans.Exercise;
 import dmacc.beans.Nutrition;
+import dmacc.beans.WeightBMI;
 import dmacc.repository.ExerciseRepository;
 import dmacc.repository.NutritionRepository;
+import dmacc.repository.WeightBMIRepository;
 import dmacc.repository.ClientRepository;
 
 import java.util.List;
@@ -25,6 +27,9 @@ public class FitnessController {
     
     @Autowired
     private ClientRepository clientRepository;
+    
+    @Autowired 
+    private WeightBMIRepository weightBMIRepository;
 
     @GetMapping("/")
     public String index(Model model) {
@@ -270,6 +275,83 @@ public class FitnessController {
             // Handle error case where client ID is null
             return "redirect:/clientNutritionList";
         }
+    }
+    
+    @GetMapping("/addWeightHeight")
+    public String showWeightHeightForm(Model model) {
+        model.addAttribute("weightBMI", new WeightBMI());
+        return "addWeightHeight";
+    }
+
+    @PostMapping("/addWeightHeight")
+    public String addWeightHeight(WeightBMI weightBMI) {
+        weightBMIRepository.save(weightBMI);
+        return "redirect:/";
+    }
+    
+    @GetMapping("/weightHeightList")
+    public String showWeightHeightList(Model model) {
+        model.addAttribute("weightBMI", weightBMIRepository.findAll());
+        return "weightHeightList";
+    }
+    
+    @GetMapping("/addClientWeightHeight")
+    public String showAddClientWeightHeightForm(Model model) {
+        // Retrieve all clients from the repository
+        List<Client> clients = clientRepository.findAll();
+        
+        // Pass the list of clients and a new WeightBMI object to the model
+        model.addAttribute("clients", clients);
+        model.addAttribute("weightBMI", new WeightBMI());
+        
+        return "addClientWeightHeight"; // Assuming you have a template called addClientWeightHeight.html
+    }
+    
+    @PostMapping("/addClientWeightHeight")
+    public String addClientWeightHeight(@RequestParam Long clientId, @ModelAttribute WeightBMI weightBMI) {
+        // Retrieve the client by id from the repository
+        Client client = clientRepository.findById(clientId)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid client Id:" + clientId));
+        // Set the client for the weight and height entry
+        weightBMI.setClient(client);
+        // Save the weight and height entry to the database
+        weightBMIRepository.save(weightBMI);
+        // Redirect to the index page
+        return "redirect:/";
+    }
+
+    @GetMapping("/clientWeightHeightList/{clientId}")
+    public String showClientWeightHeightList(@PathVariable Long clientId, Model model) {
+        // Retrieve the client by id from the repository
+        Client client = clientRepository.findById(clientId)
+                    .orElseThrow(() -> new IllegalArgumentException("Invalid client Id:" + clientId));
+        // Pass the client object to the model
+        model.addAttribute("client", client);
+        return "clientWeightHeightList";
+    }
+    
+    @PostMapping("/deleteClientWeightHeight/{id}")
+    public String deleteClientWeightHeight(@PathVariable Long id) {
+        // Get the client ID of the weightBMI before deleting it
+        Long clientId = weightBMIRepository.findById(id)
+                                           .map(weightBMI -> weightBMI.getClient().getId())
+                                           .orElse(null);
+        
+        weightBMIRepository.deleteById(id);
+        
+        // Redirect back to the client's weightBMI list
+        if (clientId != null) {
+            return "redirect:/clientWeightHeightList/" + clientId;
+        } else {
+            // Handle error case where client ID is null
+            return "redirect:/clientWeightHeightList";
+        }
+    }
+    
+    @PostMapping("/deleteWeightHeight/{id}")
+    public String deleteWeightHeight(@PathVariable Long id) {
+        weightBMIRepository.deleteById(id);
+        return "redirect:/weightHeightList";
     }
     
 }

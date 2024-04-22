@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Weight/Height</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: 50px auto;
+            padding: 30px;
+            background-color: #fff;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        input[type="number"], input[type="date"] {
+            width: calc(100% - 22px);
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-right: 22px;
+        }
+
+        .error-message {
+            color: red;
+            font-size: 14px;
+        }
+
+        button {
+            padding: 12px 30px;
+            background-color: #4CAF50;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+        
+        .home-btn {
+            display: block;
+            width: 100px;
+            margin: 20px auto;
+            padding: 8px 12px;
+            border-radius: 5px;
+            background-color: #007bff;
+            color: #fff;
+            text-align: center;
+            text-decoration: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Add Weight/Height</h1>
+        <form id="weightHeightForm" action="/addWeightHeight" method="post" onsubmit="return validateForm()">
+            <div class="form-group">
+                <label for="weight">Weight (lbs):</label>
+                <input type="number" id="weight" name="weight" required>
+                <div id="weightError" class="error-message" style="display: none;">Weight is required.</div>
+            </div>
+            <div class="form-group">
+                <label for="feet">Height (feet):</label>
+                <input type="number" id="feet" name="feet" required>
+                <div id="feetError" class="error-message" style="display: none;">Feet value is required.</div>
+            </div>
+            <div class="form-group">
+                <label for="inches">Height (inches):</label>
+                <input type="number" id="inches" name="inches" required>
+                <div id="inchesError" class="error-message" style="display: none;">Inches value is required.</div>
+            </div>
+            <div class="form-group">
+                <label for="date">Date:</label>
+                <input type="date" id="date" name="date" required>
+                <div id="dateError" class="error-message" style="display: none;">Date is required.</div>
+            </div>
+            <button type="submit">Add Weight/Height</button>
+        </form>
+        <a class="home-btn" href="/">Home</a>
+    </div>
+
+    <script>
+        function validateForm() {
+            var isValid = true;
+            var weight = document.getElementById('weight').value;
+            var feet = document.getElementById('feet').value;
+            var inches = document.getElementById('inches').value;
+            var date = document.getElementById('date').value;
+
+            if (!weight) {
+                document.getElementById('weightError').style.display = 'block';
+                isValid = false;
+            } else {
+                document.getElementById('weightError').style.display = 'none';
+            }
+
+            if (!feet) {
+                document.getElementById('feetError').style.display = 'block';
+                isValid = false;
+            } else {
+                document.getElementById('feetError').style.display = 'none';
+            }
+
+            if (!inches) {
+                document.getElementById('inchesError').style.display = 'block';
+                isValid = false;
+            } else {
+                document.getElementById('inchesError').style.display = 'none';
+            }
+
+            if (!date) {
+                document.getElementById('dateError').style.display = 'block';
+                isValid = false;
+            } else {
+                document.getElementById('dateError').style.display = 'none';
+            }
+
+            return isValid;
+        }
+    </script>
+</body>
+</html>

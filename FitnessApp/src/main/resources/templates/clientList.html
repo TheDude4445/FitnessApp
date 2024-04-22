@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>List of Clients</title>
     <style>
+        /* CSS styles */
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: #f0f0f0;
@@ -46,7 +47,7 @@
             background-color: #f9f9f9;
         }
 
-        .edit-btn, .delete-btn, .exercise-btn, .nutrition-btn {
+        .edit-btn, .delete-btn, .exercise-btn, .nutrition-btn, .weight-height-btn {
             display: inline-block;
             padding: 8px 12px;
             border-radius: 5px;
@@ -80,6 +81,15 @@
 
         .exercise-btn:hover, .nutrition-btn:hover {
             background-color: #0056b3;
+        }
+
+        .weight-height-btn {
+            background-color: #ffc107;
+            color: #212529;
+        }
+
+        .weight-height-btn:hover {
+            background-color: #e0a800;
         }
 
         .home-btn {
@@ -127,6 +137,7 @@
                         </form>
                         <a class="exercise-btn" th:href="@{/clientExerciseList/{id}(id=${client.id})}">Exercise List</a>
                         <a class="nutrition-btn" th:href="@{/clientNutritionList/{id}(id=${client.id})}">Nutrition List</a>
+                        <a class="weight-height-btn" th:href="@{/clientWeightHeightList/{id}(id=${client.id})}">Weight/Height List</a>
                     </td>
                 </tr>
             </tbody>

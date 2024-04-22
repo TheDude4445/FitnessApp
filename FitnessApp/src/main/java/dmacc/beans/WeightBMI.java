@@ -12,9 +12,9 @@ public class WeightBMI {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Double weight; // in kilograms (allowing null values)
-    private Double height; // in meters (allowing null values)
-    private Double bmi; // BMI can be null if weight or height is null or zero
+    private Double weight; // in lbs
+    private Double feet; // in feet
+    private Double inches; // in inches
     private LocalDate date; // Date variable
     @ManyToOne
     @JoinColumn(name = "client_id")
@@ -25,34 +25,41 @@ public class WeightBMI {
         // Default constructor
     }
 
-    public WeightBMI(Double weight, Double height, LocalDate date) {
+    public WeightBMI(Double weight, Double feet, Double inches, LocalDate date) {
         this.weight = weight;
-        this.height = height;
+        this.feet = feet;
+        this.inches = inches;
         this.date = date;
-        calculateBMI();
     }
 
     // Getters and Setters
+    
+    public Long getId() {
+        return id;
+    }
+    
     public Double getWeight() {
         return weight;
     }
 
     public void setWeight(Double weight) {
-        this.weight = weight;
-        calculateBMI();
+        this.weight = weight;       
     }
 
-    public Double getHeight() {
-        return height;
+    public Double getFeet() {
+        return feet;
     }
 
-    public void setHeight(Double height) {
-        this.height = height;
-        calculateBMI();
+    public void setFeet(Double feet) {
+        this.feet = feet;   
     }
 
-    public Double getBMI() {
-        return bmi;
+    public Double getInches() {
+        return inches;
+    }
+
+    public void setInches(Double inches) {
+        this.inches = inches;   
     }
 
     public LocalDate getDate() {
@@ -62,13 +69,12 @@ public class WeightBMI {
     public void setDate(LocalDate date) {
         this.date = date;
     }
-
-    // Method to calculate BMI
-    private void calculateBMI() {
-        if (weight != null && height != null && height > 0) {
-            this.bmi = weight / (height * height);
-        } else {
-            this.bmi = null; // Handle null weight, null height, or zero height
-        }
+    
+    public Client getClient() {
+        return this.client;
+    }
+    
+    public void setClient(Client client) {
+        this.client = client;
     }
 }
