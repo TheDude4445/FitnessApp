@@ -3,6 +3,7 @@ package dmacc.beans;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import jakarta.persistence.*;
+import java.time.LocalDate; // Import LocalDate from java.time package
 
 @Data
 @NoArgsConstructor
@@ -16,16 +17,18 @@ public class Exercise {
     private String description;
     private int reps;
     private int sets;
+    private LocalDate date; // Date variable
     @ManyToOne
     @JoinColumn(name = "client_id")
     private Client client;
 
-    public Exercise(String name, String type, String description, int reps, int sets) {
+    public Exercise(String name, String type, String description, int reps, int sets, LocalDate date) {
         this.name = name;
         this.type = type;
         this.description = description;
         this.reps = reps;
         this.sets = sets;
+        this.date = date;
     }
     
     public Exercise() {
@@ -79,5 +82,21 @@ public class Exercise {
 
     public void setSets(int sets) {
         this.sets = sets;
+    }
+    
+    public LocalDate getDate() {
+        return date;
+    }
+
+    public void setDate(LocalDate date) {
+        this.date = date;
+    }
+    
+    public Client getClient() {
+        return client;
+    }
+
+    public void setClient(Client client) {
+        this.client = client;
     }
 }

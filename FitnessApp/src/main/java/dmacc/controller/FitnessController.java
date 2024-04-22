@@ -6,6 +6,9 @@ import dmacc.beans.Nutrition;
 import dmacc.repository.ExerciseRepository;
 import dmacc.repository.NutritionRepository;
 import dmacc.repository.ClientRepository;
+
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -160,6 +163,113 @@ public class FitnessController {
     public String deleteClient(@PathVariable Long id) {
         clientRepository.deleteById(id);
         return "redirect:/clientList";
+    }
+    
+    @GetMapping("/addClientExercise")
+    public String showAddClientExerciseForm(Model model) {
+        // Retrieve all clients from the repository
+        List<Client> clients = clientRepository.findAll();
+        
+        // Pass the list of clients and a new Exercise object to the model
+        model.addAttribute("clients", clients);
+        model.addAttribute("exercise", new Exercise());
+        
+        return "addClientExercise";
+    }
+
+    @PostMapping("/addClientExercise")
+    public String addClientExercise(@RequestParam Long clientId, @ModelAttribute Exercise exercise) {
+        // Retrieve the client by id from the repository
+        Client client = clientRepository.findById(clientId)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid client Id:" + clientId));
+        // Set the client for the exercise
+        exercise.setClient(client);
+        // Save the exercise to the database
+        exerciseRepository.save(exercise);
+        // Redirect to the index page
+        return "redirect:/";
+    }
+
+
+    @GetMapping("/clientExerciseList/{clientId}")
+    public String showClientExerciseList(@PathVariable Long clientId, Model model) {
+        // Retrieve the client by id from the repository
+        Client client = clientRepository.findById(clientId)
+                    .orElseThrow(() -> new IllegalArgumentException("Invalid client Id:" + clientId));
+        // Pass the client object to the model
+        model.addAttribute("client", client);
+        return "clientExerciseList";
+    }
+    
+    @PostMapping("/deleteClientExercise/{id}")
+    public String deleteClientExercise(@PathVariable Long id) {
+        // Get the client ID of the exercise before deleting it
+        Long clientId = exerciseRepository.findById(id)
+                                           .map(exercise -> exercise.getClient().getId())
+                                           .orElse(null);
+        
+        exerciseRepository.deleteById(id);
+        
+        // Redirect back to the client's exercise list
+        if (clientId != null) {
+            return "redirect:/clientExerciseList/" + clientId;
+        } else {
+            // Handle error case where client ID is null
+            return "redirect:/clientExerciseList";
+        }
+    }
+
+    @GetMapping("/addClientNutrition")
+    public String showAddClientNutritionForm(Model model) {
+        // Retrieve all clients from the repository
+        List<Client> clients = clientRepository.findAll();
+        
+        // Pass the list of clients and a new Nutrition object to the model
+        model.addAttribute("clients", clients);
+        model.addAttribute("nutrition", new Nutrition());
+        
+        return "addClientNutrition";
+    }
+
+    @PostMapping("/addClientNutrition")
+    public String addClientNutrition(@RequestParam Long clientId, @ModelAttribute Nutrition nutrition) {
+        // Retrieve the client by id from the repository
+        Client client = clientRepository.findById(clientId)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid client Id:" + clientId));
+        // Set the client for the nutrition
+        nutrition.setClient(client);
+        // Save the nutrition to the database
+        nutritionRepository.save(nutrition);
+        // Redirect to the index page
+        return "redirect:/";
+    }
+
+    @GetMapping("/clientNutritionList/{clientId}")
+    public String showClientNutritionList(@PathVariable Long clientId, Model model) {
+        // Retrieve the client by id from the repository
+        Client client = clientRepository.findById(clientId)
+                    .orElseThrow(() -> new IllegalArgumentException("Invalid client Id:" + clientId));
+        // Pass the client object to the model
+        model.addAttribute("client", client);
+        return "clientNutritionList";
+    }
+
+    @PostMapping("/deleteClientNutrition/{id}")
+    public String deleteClientNutrition(@PathVariable Long id) {
+        // Get the client ID of the nutrition before deleting it
+        Long clientId = nutritionRepository.findById(id)
+                                           .map(nutrition -> nutrition.getClient().getId())
+                                           .orElse(null);
+        
+        nutritionRepository.deleteById(id);
+        
+        // Redirect back to the client's nutrition list
+        if (clientId != null) {
+            return "redirect:/clientNutritionList/" + clientId;
+        } else {
+            // Handle error case where client ID is null
+            return "redirect:/clientNutritionList";
+        }
     }
     
 }

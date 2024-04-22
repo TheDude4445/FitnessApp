@@ -46,18 +46,18 @@
             background-color: #f9f9f9;
         }
 
-        .edit-btn, .delete-btn {
+        .edit-btn, .delete-btn, .exercise-btn, .nutrition-btn {
             display: inline-block;
             padding: 8px 12px;
             border-radius: 5px;
             text-decoration: none;
             cursor: pointer;
+            margin-right: 5px;
         }
 
         .edit-btn {
             background-color: #4CAF50;
             color: #fff;
-            margin-right: 5px;
         }
 
         .edit-btn:hover {
@@ -71,6 +71,15 @@
 
         .delete-btn:hover {
             background-color: #da190b;
+        }
+
+        .exercise-btn, .nutrition-btn {
+            background-color: #007bff;
+            color: #fff;
+        }
+
+        .exercise-btn:hover, .nutrition-btn:hover {
+            background-color: #0056b3;
         }
 
         .home-btn {
@@ -116,6 +125,8 @@
                         <form th:action="@{/deleteClient/{id}(id=${client.id})}" method="post" style="display: inline;">
                             <button type="submit" class="delete-btn">Delete</button>
                         </form>
+                        <a class="exercise-btn" th:href="@{/clientExerciseList/{id}(id=${client.id})}">Exercise List</a>
+                        <a class="nutrition-btn" th:href="@{/clientNutritionList/{id}(id=${client.id})}">Nutrition List</a>
                     </td>
                 </tr>
             </tbody>

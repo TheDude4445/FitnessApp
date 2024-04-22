@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>List of Nutritions</title>
+    <title>Client Nutrition List</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -47,27 +47,13 @@
             background-color: #f9f9f9;
         }
 
-        .edit-btn, .delete-btn {
-            display: inline-block;
+        .delete-btn {
             padding: 8px 12px;
             border-radius: 5px;
-            text-decoration: none;
-            cursor: pointer;
-        }
-
-        .edit-btn {
-            background-color: #4CAF50;
-            color: #fff;
-            margin-right: 5px;
-        }
-
-        .edit-btn:hover {
-            background-color: #45a049;
-        }
-
-        .delete-btn {
             background-color: #f44336;
             color: #fff;
+            text-decoration: none;
+            cursor: pointer;
         }
 
         .delete-btn:hover {
@@ -94,9 +80,8 @@
 </head>
 <body>
     <div class="container">
-        <h1>Meals</h1>
+        <h1>Client Nutrition List</h1>
         <a class="home-btn" href="/">Home</a>
-        <a class="home-btn" href="/addNutrition">Add Nutrition</a>
         <table id="nutritionTable">
             <thead>
                 <tr>
@@ -104,15 +89,14 @@
                     <th onclick="sortTable(1)">Name</th>
                     <th onclick="sortTable(2)">Description</th>
                     <th onclick="sortTable(3)">Calories</th>
-                    <th onclick="sortTable(4)">Protein Grams</th>
-                    <th onclick="sortTable(5)">Carbs Grams</th>
-                    <th onclick="sortTable(6)">Fat Grams</th>
+                    <th onclick="sortTable(4)">Protein (g)</th>
+                    <th onclick="sortTable(5)">Carbs (g)</th>
+                    <th onclick="sortTable(6)">Fat (g)</th>
                     <th>Action</th>
                 </tr>
             </thead>
             <tbody>
-                <!-- Iterate over nutritions and display each row -->
-                <tr th:each="nutrition : ${nutritions}" th:if="${nutrition.client == null}">
+                <tr th:each="nutrition : ${client.nutrition}">
                     <td th:text="${nutrition.id}"></td>
                     <td th:text="${nutrition.name}"></td>
                     <td th:text="${nutrition.description}"></td>
@@ -121,10 +105,7 @@
                     <td th:text="${nutrition.carbsGrams}"></td>
                     <td th:text="${nutrition.fatGrams}"></td>
                     <td>
-                        <!-- Edit button -->
-                        <a class="edit-btn" th:href="@{/editNutrition/{id}(id=${nutrition.id})}">Edit</a>
-                        <!-- Delete button -->
-                        <form th:action="@{/deleteNutrition/{id}(id=${nutrition.id})}" method="post" style="display: inline;">
+                        <form th:action="@{/deleteClientNutrition/{id}(id=${nutrition.id})}" method="post" style="display: inline;">
                             <button type="submit" class="delete-btn">Delete</button>
                         </form>
                     </td>
@@ -150,13 +131,13 @@
                 var yValue = parseFloat(y.innerHTML);
                 if (isNaN(xValue) || isNaN(yValue)) {
                     // If parsing fails, compare as strings
-                    if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+                    if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
                         shouldSwitch = true;
                         break;
                     }
                 } else {
-                    // Compare numeric values in descending order
-                    if (xValue < yValue) {
+                    // Compare numeric values in ascending order
+                    if (xValue > yValue) {
                         shouldSwitch = true;
                         break;
                     }

@@ -1,5 +1,6 @@
 package dmacc.beans;
 
+import java.util.Collections;
 import java.util.List;
 
 import jakarta.persistence.*;
@@ -33,6 +34,8 @@ public class Client {
         this.name = name;
         this.email = email;
         this.phoneNumber = phoneNumber;
+        this.exercises = Collections.emptyList();
+        this.nutrition = Collections.emptyList();;
     }
 
     public Client(String name, String email, String phoneNumber, List<Exercise> exercises, List<Nutrition> nutrition, List<WeightBMI> BMI) {

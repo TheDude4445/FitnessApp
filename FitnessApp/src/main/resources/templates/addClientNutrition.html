@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Nutrition</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: 50px auto;
+            padding: 30px;
+            background-color: #fff;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        input[type="text"],
+        input[type="number"] {
+            width: calc(100% - 22px);
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-right: 22px;
+        }
+
+        select {
+            width: calc(100% - 22px);
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-right: 22px;
+            background-color: white;
+            color: black;
+        }
+
+        .error-message {
+            color: red;
+            font-size: 14px;
+        }
+
+        button {
+            padding: 12px 30px;
+            background-color: #4CAF50;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .home-btn {
+            display: block;
+            width: 100px;
+            margin: 20px auto;
+            padding: 8px 12px;
+            border-radius: 5px;
+            background-color: #007bff;
+            color: #fff;
+            text-align: center;
+            text-decoration: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Add Nutrition</h1>
+        <form id="nutritionForm" action="/addClientNutrition" method="post" onsubmit="return validateForm()">
+            <div class="form-group">
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name" required>
+                <div id="nameError" class="error-message" style="display: none;">Name is required.</div>
+            </div>
+            <!-- Dropdown menu for selecting a client -->
+            <div class="form-group">
+                <label for="clientId">Select Client:</label>
+                <select id="clientId" name="clientId" required>
+                    <option value="">Select Client</option>
+                    <!-- Iterate over existing clients and populate dropdown options -->
+                    <option th:each="client : ${clients}" th:value="${client.id}" th:text="${client.name}"></option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="description">Description:</label>
+                <input type="text" id="description" name="description" required>
+                <div id="descriptionError" class="error-message" style="display: none;">Description is required.</div>
+            </div>
+            <div class="form-group">
+                <label for="calories">Calories:</label>
+                <input type="number" id="calories" name="calories" required>
+                <div id="caloriesError" class="error-message" style="display: none;">Please enter a valid integer for calories.</div>
+            </div>
+            <div class="form-group">
+                <label for="proteinGrams">Protein Grams:</label>
+                <input type="number" id="proteinGrams" name="proteinGrams" required>
+                <div id="proteinGramsError" class="error-message" style="display: none;">Please enter a valid integer for protein grams.</div>
+            </div>
+            <div class="form-group">
+                <label for="carbsGrams">Carbs Grams:</label>
+                <input type="number" id="carbsGrams" name="carbsGrams" required>
+                <div id="carbsGramsError" class="error-message" style="display: none;">Please enter a valid integer for carbs grams.</div>
+            </div>
+            <div class="form-group">
+                <label for="fatGrams">Fat Grams:</label>
+                <input type="number" id="fatGrams" name="fatGrams" required>
+                <div id="fatGramsError" class="error-message" style="display: none;">Please enter a valid integer for fat grams.</div>
+            </div>
+            <button type="submit">Add Meal</button>
+        </form>
+        <a class="home-btn" href="/">Home</a>
+    </div>
+
+    <script>
+        function validateForm() {
+            var isValid = true;
+            var name = document.getElementById('name').value;
+            var clientId = document.getElementById('clientId').value;
+            var description = document.getElementById('description').value;
+            var calories = document.getElementById('calories').value;
+            var proteinGrams = document.getElementById('proteinGrams').value;
+            var carbsGrams = document.getElementById('carbsGrams').value;
+            var fatGrams = document.getElementById('fatGrams').value;
+
+            if (!name) {
+                document.getElementById('nameError').style.display = 'block';
+                isValid = false;
+            } else {
+                document.getElementById('nameError').style.display = 'none';
+            }
+
+            if (!clientId) {
+                // Handle the case when no client is selected
+                alert('Please select a client.');
+                isValid = false;
+            }
+
+            if (!description) {
+                document.getElementById('descriptionError').style.display = 'block';
+                isValid = false;
+            } else {
+                document.getElementById('descriptionError').style.display = 'none';
+            }
+
+            if (isNaN(parseInt(calories)) || calories === '') {
+                document.getElementById('caloriesError').style.display = 'block';
+                isValid = false;
+            } else {
+                document.getElementById('caloriesError').style.display = 'none';
+            }
+
+            if (isNaN(parseInt(proteinGrams)) || proteinGrams === '') {
+                document.getElementById('proteinGramsError').style.display = 'block';
+                isValid = false;
+            } else {
+                document.getElementById('proteinGramsError').style.display = 'none';
+            }
+
+            if (isNaN(parseInt(carbsGrams)) || carbsGrams === '') {
+                document.getElementById('carbsGramsError').style.display = 'block';
+                isValid = false;
+            } else {
+                document.getElementById('carbsGramsError').style.display = 'none';
+            }
+
+            if (isNaN(parseInt(fatGrams)) || fatGrams === '') {
+                document.getElementById('fatGramsError').style.display = 'block';
+                isValid = false;
+            } else {
+                document.getElementById('fatGramsError').style.display = 'none';
+            }
+
+            return isValid;
+        }
+    </script>
+</body>
+</html>
