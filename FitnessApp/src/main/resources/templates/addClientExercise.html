@@ -132,6 +132,11 @@
                 <input type="number" id="sets" name="sets" required>
                 <div id="setsError" class="error-message" style="display: none;">Please enter a valid number for sets.</div>
             </div>
+            <div class="form-group">
+                <label for="date">Date:</label>
+                <input type="date" id="date" name="date" required>
+                <div id="dateError" class="error-message" style="display: none;">Date is required.</div>
+            </div>
             <button type="submit">Add Exercise</button>
         </form>
         <a class="home-btn" href="/">Home</a>
@@ -145,6 +150,7 @@
             var description = document.getElementById('description').value;
             var reps = document.getElementById('reps').value;
             var sets = document.getElementById('sets').value;
+            var date = document.getElementById('date').value;
 
             if (!name) {
                 document.getElementById('nameError').style.display = 'block';
@@ -179,6 +185,13 @@
                 isValid = false;
             } else {
                 document.getElementById('setsError').style.display = 'none';
+            }
+
+            if (!date) {
+                document.getElementById('dateError').style.display = 'block';
+                isValid = false;
+            } else {
+                document.getElementById('dateError').style.display = 'none';
             }
 
             return isValid;

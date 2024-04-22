@@ -36,6 +36,7 @@
             padding: 12px 15px;
             border-bottom: 1px solid #ddd;
             text-align: left;
+            cursor: pointer; /* Add cursor pointer for clickable headers */
         }
 
         th {
@@ -81,15 +82,16 @@
     <div class="container">
         <h1>Client Exercise List</h1>
         <a class="home-btn" href="/">Home</a>
-        <table>
+        <table id="exerciseTable">
             <thead>
                 <tr>
-                    <th>ID</th>
-                    <th>Name</th>
-                    <th>Type</th>
-                    <th>Description</th>
-                    <th>Reps</th>
-                    <th>Sets</th>
+                    <th onclick="sortColumn(0)">ID</th>
+                    <th onclick="sortColumn(1)">Name</th>
+                    <th onclick="sortColumn(2)">Type</th>
+                    <th onclick="sortColumn(3)">Description</th>
+                    <th onclick="sortColumn(4)">Reps</th>
+                    <th onclick="sortColumn(5)">Sets</th>
+                    <th onclick="sortColumn(6)">Date</th>
                     <th>Action</th>
                 </tr>
             </thead>
@@ -101,6 +103,7 @@
                     <td th:text="${exercise.description}"></td>
                     <td th:text="${exercise.reps}"></td>
                     <td th:text="${exercise.sets}"></td>
+                    <td th:text="${exercise.date}"></td>
                     <td>
                         <form th:action="@{/deleteClientExercise/{id}(id=${exercise.id})}" method="post" style="display: inline;">
                             <button type="submit" class="delete-btn">Delete</button>
@@ -110,5 +113,43 @@
             </tbody>
         </table>
     </div>
+
+    <script>
+        function sortColumn(columnIndex) {
+            var table, rows, switching, i, x, y, shouldSwitch;
+            table = document.getElementById("exerciseTable");
+            switching = true;
+            while (switching) {
+                switching = false;
+                rows = table.rows;
+                for (i = 1; i < (rows.length - 1); i++) {
+                    shouldSwitch = false;
+                    x = rows[i].getElementsByTagName("td")[columnIndex];
+                    y = rows[i + 1].getElementsByTagName("td")[columnIndex];
+                    // Get the content of the cells for comparison
+                    var xContent = x.innerHTML.toLowerCase();
+                    var yContent = y.innerHTML.toLowerCase();
+                    // Compare the content based on the data type of the attribute
+                    if (isNaN(xContent)) {
+                        // If the content is not a number, compare as strings
+                        if (xContent > yContent) {
+                            shouldSwitch = true;
+                            break;
+                        }
+                    } else {
+                        // If the content is a number, compare as numbers
+                        if (parseFloat(xContent) > parseFloat(yContent)) {
+                            shouldSwitch = true;
+                            break;
+                        }
+                    }
+                }
+                if (shouldSwitch) {
+                    rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+                    switching = true;
+                }
+            }
+        }
+    </script>
 </body>
 </html>

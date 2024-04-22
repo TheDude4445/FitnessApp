@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add Nutrition</title>
+    <title>Add Meal</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -38,7 +38,8 @@
         }
 
         input[type="text"],
-        input[type="number"] {
+        input[type="number"],
+        input[type="date"] {
             width: calc(100% - 22px);
             padding: 10px;
             border: 1px solid #ccc;
@@ -114,6 +115,11 @@
                 <input type="number" id="fatGrams" name="fatGrams" required>
                 <div id="fatGramsError" class="error-message" style="display: none;">Please enter a valid integer for fat grams.</div>
             </div>
+            <div class="form-group">
+                <label for="date">Date:</label>
+                <input type="date" id="date" name="date" required>
+                <div id="dateError" class="error-message" style="display: none;">Please select a valid date.</div>
+            </div>
             <button type="submit">Add Meal</button>
         </form>
         <a class="home-btn" href="/">Home</a>
@@ -128,6 +134,7 @@
             var proteinGrams = document.getElementById('proteinGrams').value;
             var carbsGrams = document.getElementById('carbsGrams').value;
             var fatGrams = document.getElementById('fatGrams').value;
+            var date = document.getElementById('date').value;
 
             if (!name) {
                 document.getElementById('nameError').style.display = 'block';
@@ -169,6 +176,13 @@
                 isValid = false;
             } else {
                 document.getElementById('fatGramsError').style.display = 'none';
+            }
+
+            if (!date) {
+                document.getElementById('dateError').style.display = 'block';
+                isValid = false;
+            } else {
+                document.getElementById('dateError').style.display = 'none';
             }
 
             return isValid;

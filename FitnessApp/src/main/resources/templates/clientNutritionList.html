@@ -92,6 +92,7 @@
                     <th onclick="sortTable(4)">Protein (g)</th>
                     <th onclick="sortTable(5)">Carbs (g)</th>
                     <th onclick="sortTable(6)">Fat (g)</th>
+                    <th onclick="sortTable(7)">Date</th>
                     <th>Action</th>
                 </tr>
             </thead>
@@ -104,6 +105,7 @@
                     <td th:text="${nutrition.proteinGrams}"></td>
                     <td th:text="${nutrition.carbsGrams}"></td>
                     <td th:text="${nutrition.fatGrams}"></td>
+                    <td th:text="${nutrition.date}"></td>
                     <td>
                         <form th:action="@{/deleteClientNutrition/{id}(id=${nutrition.id})}" method="post" style="display: inline;">
                             <button type="submit" class="delete-btn">Delete</button>
@@ -126,18 +128,18 @@
                 shouldSwitch = false;
                 x = rows[i].getElementsByTagName("td")[columnIndex];
                 y = rows[i + 1].getElementsByTagName("td")[columnIndex];
-                // Parse inner HTML to numbers for numeric columns
-                var xValue = parseFloat(x.innerHTML);
-                var yValue = parseFloat(y.innerHTML);
-                if (isNaN(xValue) || isNaN(yValue)) {
-                    // If parsing fails, compare as strings
-                    if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+                // Parse inner HTML to compare dates or numbers
+                var xContent = x.innerHTML.toLowerCase();
+                var yContent = y.innerHTML.toLowerCase();
+                if (isNaN(xContent)) {
+                    // If not a number, compare as strings
+                    if (xContent > yContent) {
                         shouldSwitch = true;
                         break;
                     }
                 } else {
-                    // Compare numeric values in ascending order
-                    if (xValue > yValue) {
+                    // If a number, compare as numbers
+                    if (parseFloat(xContent) > parseFloat(yContent)) {
                         shouldSwitch = true;
                         break;
                     }

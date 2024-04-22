@@ -107,6 +107,7 @@
                     <th onclick="sortTable(4)">Protein Grams</th>
                     <th onclick="sortTable(5)">Carbs Grams</th>
                     <th onclick="sortTable(6)">Fat Grams</th>
+                    <th onclick="sortDate(7)">Date</th> <!-- Added sorting for date -->
                     <th>Action</th>
                 </tr>
             </thead>
@@ -120,6 +121,7 @@
                     <td th:text="${nutrition.proteinGrams}"></td>
                     <td th:text="${nutrition.carbsGrams}"></td>
                     <td th:text="${nutrition.fatGrams}"></td>
+                    <td th:text="${nutrition.date}"></td> <!-- Display date -->
                     <td>
                         <!-- Edit button -->
                         <a class="edit-btn" th:href="@{/editNutrition/{id}(id=${nutrition.id})}">Edit</a>
@@ -134,40 +136,66 @@
     </div>
 
     <script>
-    function sortTable(columnIndex) {
-        var table, rows, switching, i, x, y, shouldSwitch;
-        table = document.getElementById("nutritionTable");
-        switching = true;
-        while (switching) {
-            switching = false;
-            rows = table.rows;
-            for (i = 1; i < (rows.length - 1); i++) {
-                shouldSwitch = false;
-                x = rows[i].getElementsByTagName("td")[columnIndex];
-                y = rows[i + 1].getElementsByTagName("td")[columnIndex];
-                // Parse inner HTML to numbers for numeric columns
-                var xValue = parseFloat(x.innerHTML);
-                var yValue = parseFloat(y.innerHTML);
-                if (isNaN(xValue) || isNaN(yValue)) {
-                    // If parsing fails, compare as strings
-                    if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
-                        shouldSwitch = true;
-                        break;
+        function sortTable(columnIndex) {
+            var table, rows, switching, i, x, y, shouldSwitch;
+            table = document.getElementById("nutritionTable");
+            switching = true;
+            while (switching) {
+                switching = false;
+                rows = table.rows;
+                for (i = 1; i < (rows.length - 1); i++) {
+                    shouldSwitch = false;
+                    x = rows[i].getElementsByTagName("td")[columnIndex];
+                    y = rows[i + 1].getElementsByTagName("td")[columnIndex];
+                    // Parse inner HTML to numbers for numeric columns
+                    var xValue = parseFloat(x.innerHTML);
+                    var yValue = parseFloat(y.innerHTML);
+                    if (isNaN(xValue) || isNaN(yValue)) {
+                        // If parsing fails, compare as strings
+                        if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+                            shouldSwitch = true;
+                            break;
+                        }
+                    } else {
+                        // Compare numeric values in ascending order
+                        if (xValue > yValue) {
+                            shouldSwitch = true;
+                            break;
+                        }
                     }
-                } else {
-                    // Compare numeric values in descending order
-                    if (xValue < yValue) {
+                }
+                if (shouldSwitch) {
+                    rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+                    switching = true;
+                }
+            }
+        }
+
+        function sortDate(columnIndex) {
+            var table, rows, switching, i, x, y, shouldSwitch;
+            table = document.getElementById("nutritionTable");
+            switching = true;
+            while (switching) {
+                switching = false;
+                rows = table.rows;
+                for (i = 1; i < (rows.length - 1); i++) {
+                    shouldSwitch = false;
+                    x = rows[i].getElementsByTagName("td")[columnIndex];
+                    y = rows[i + 1].getElementsByTagName("td")[columnIndex];
+                    // Convert date strings to Date objects for comparison
+                    var xDate = new Date(x.innerHTML);
+                    var yDate = new Date(y.innerHTML);
+                    if (xDate > yDate) {
                         shouldSwitch = true;
                         break;
                     }
                 }
-            }
-            if (shouldSwitch) {
-                rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
-                switching = true;
+                if (shouldSwitch) {
+                    rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+                    switching = true;
+                }
             }
         }
-    }
     </script>
 </body>
 </html>
