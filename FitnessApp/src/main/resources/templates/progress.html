@@ -1,10 +1,11 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Progress</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Weight and Height</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
+        <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: #f0f0f0;
@@ -30,11 +31,30 @@
             letter-spacing: 2px;
         }
 
-        .chart-container {
-            position: relative;
-            margin: auto;
-            width: 80%;
-            height: 400px;
+        .button-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .button {
+            padding: 15px 30px;
+            background-color: #4CAF50;
+            color: #fff;
+            border: 2px solid transparent;
+            border-radius: 5px;
+            font-size: 18px;
+            text-decoration: none;
+            text-align: center;
+            transition: all 0.3s ease-in-out;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .button:hover {
+            background-color: #45a049;
+            border-color: #45a049;
         }
 
         .footer {
@@ -60,126 +80,111 @@
             padding: 20px;
             margin-top: 30px;
         }
-        
-        .home-btn {
-            display: block;
-            width: 100px;
-            margin: 20px auto;
-            padding: 8px 12px;
-            border-radius: 5px;
-            background-color: #007bff;
-            color: #fff;
-            text-align: center;
-            text-decoration: none;
-            cursor: pointer;
-        }
-
-        .home-btn:hover {
-            background-color: #0056b3;
-        }
     </style>
+    
 </head>
 <body>
-    <div class="container">
-        <h1>Progress Page</h1>
+<div class="container">
+    <h1>Client Weight Over Time</h1>
+    <div>
+        <label for="clientId">Select Client:</label>
+		<select id="clientId" name="clientId" required>
+		    <option value="">Select Client</option>
+		    <!-- Iterate over existing clients and populate dropdown options -->
+		    <option th:each="client : ${clients}" th:value="${client.id}" th:text="${client.name}"></option>
+		</select>
 
-        <!-- Client Dropdown -->
-        <div class="dropdown">
-            <label for="clientSelect">Select Client:</label>
-            <select id="clientSelect" onchange="loadClientData()">
-                <option value="">Select a client</option>
+    </div>
+    <canvas id="weightChart"></canvas>
+</div>
 
-            </select>
-        </div>
-        
-        <!-- Weight Graph -->
-        <div class="sub-container">
-            <h2>Weight Over Time</h2>
-            <div class="chart-container">
-                <canvas id="weightChart"></canvas>
-            </div>
-        </div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Get reference to the canvas element
+    var ctx = document.getElementById('weightChart').getContext('2d');
 
-        <!-- BMI Calculation -->
-        <div class="sub-container">
-            <h2>BMI</h2>
-            <p>Your BMI: <span id="bmiValue"></span></p>
-        </div>
-        
-        <a class="home-btn" href="/">Home</a>
-        
-		<div class="footer">
-        Developed by <a href="#">Group 5</a> | &copy; 2024 Fitness App
-    	</div>
-	</div>
- 
-
-    <!-- JavaScript to populate client dropdown and update data -->
-    <script>
-        const clients = [
-            { id: 1, name: '1' },
-            { id: 2, name: '2' },
-            { id: 3, name: '3' }
-        ];
-
-        // Function to load client data when selected from dropdown
-        function loadClientData() {
-            const clientId = document.getElementById('clientSelect').value;
-            if (clientId !== '') {
- 
-                const clientWeightData = [150, 155, 160, 158, 162, 163, 165];
-                const clientHeight = "74"; // Height in inches
-                const clientWeight = clientWeightData[clientWeightData.length - 1]; // Latest weight
-                const clientBMI = clientWeight / (clientHeight * clientHeight);
-                
-                // Display BMI value
-                document.getElementById('bmiValue').textContent = clientBMI.toFixed(2);
-
-                // Draw weight graph
-                const ctx = document.getElementById('weightChart').getContext('2d');
-                const weightChart = new Chart(ctx, {
-                    type: 'line',
-                    data: {
-                        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
-                        datasets: [{
-                            label: 'Weight',
-                            data: clientWeightData,
-                            borderColor: 'blue',
-                            borderWidth: 1,
-                            fill: false
-                        }]
-                    },
-                    options: {
-                        scales: {
-                            y: {
-                                beginAtZero: false
-                            }
-                        }
-                    }
-                });
-            } else {
-                // Clear weight graph and BMI when no client is selected
-                document.getElementById('bmiValue').textContent = '';
-                const ctx = document.getElementById('weightChart').getContext('2d');
-                const weightChart = new Chart(ctx, {
-                    type: 'line',
-                    data: {
-                        labels: [],
-                        datasets: []
-                    }
-                });
+    // Initialize chart options
+    var options = {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+            x: {
+                type: 'time',
+                time: {
+                    unit: 'day'
+                },
+                title: {
+                    display: true,
+                    text: 'Date'
+                }
+            },
+            y: {
+                title: {
+                    display: true,
+                    text: 'Weight (lbs)'
+                }
             }
         }
+    };
 
-        // Populate client dropdown options
-        const clientSelect = document.getElementById('clientSelect');
-        clients.forEach(client => {
-            const option = document.createElement('option');
-            option.value = client.id;
-            option.textContent = client.name;
-            clientSelect.appendChild(option);
-        });
-    </script>
-   
+    // Initialize empty chart
+    var chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: [],
+            datasets: []
+        },
+        options: options
+    });
+
+
+function updateChart(clientId) {
+    // Make AJAX request to fetch weight and height data for the selected client
+    fetch('/getWeightHeightData?clientId=' + clientId)
+        .then(response => response.json())
+        .then(data => {
+            // Separate weight and height data from the fetched data
+            const weightData = data.weightData;
+            const heightData = data.heightData;
+
+            // Update chart data with fetched weight and height data
+            chart.data.labels = weightData.dates;
+            chart.data.datasets = [
+                {
+                    label: 'Weight',
+                    data: weightData.weights,
+                    borderColor: 'blue',
+                    backgroundColor: 'rgba(0, 0, 255, 0.1)'
+                },
+                {
+                    label: 'Height',
+                    data: heightData.heights,
+                    borderColor: 'green',
+                    backgroundColor: 'rgba(0, 255, 0, 0.1)'
+                }
+            ];
+
+            // Update the chart
+            chart.update();
+        })
+        .catch(error => console.error('Error fetching weight and height data:', error));
+}
+
+
+    // Event listener for client selection change
+    document.getElementById('clientId').addEventListener('change', function() {
+        var clientId = this.value;
+        // Call updateChart function with selected client ID
+        updateChart(clientId);
+    });
+
+    // Initialize chart with default client
+    var defaultClientId = document.getElementById('clientId').value;
+    updateChart(defaultClientId);
+});
+
+</script>
+
 </body>
 </html>
+

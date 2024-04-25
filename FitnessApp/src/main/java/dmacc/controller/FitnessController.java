@@ -304,7 +304,7 @@ public class FitnessController {
         model.addAttribute("clients", clients);
         model.addAttribute("weightBMI", new WeightBMI());
         
-        return "addClientWeightHeight"; // Assuming you have a template called addClientWeightHeight.html
+        return "addClientWeightHeight";
     }
     
     @PostMapping("/addClientWeightHeight")
@@ -361,8 +361,12 @@ public class FitnessController {
 
     @GetMapping("/progress")
     public String showProgressPage(Model model) {
+        List<Client> clients = clientRepository.findAll();
+        model.addAttribute("clients", clients);
         return "progress";
     }
+
+
 
     
 }
