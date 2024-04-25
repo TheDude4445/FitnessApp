@@ -354,4 +354,15 @@ public class FitnessController {
         return "redirect:/weightHeightList";
     }
     
+    @GetMapping("/workouts")
+    public String showWorkoutsPage(Model model) {
+        return "workouts";
+    }
+
+    @GetMapping("/progress")
+    public String showProgressPage(Model model) {
+        return "progress";
+    }
+
+    
 }

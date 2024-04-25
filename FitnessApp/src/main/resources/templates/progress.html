@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="UTF-8">
-<title>Progress</title>
+    <meta charset="UTF-8">
+    <title>Progress</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -29,30 +30,11 @@
             letter-spacing: 2px;
         }
 
-        .button-container {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-
-        .button {
-            padding: 15px 30px;
-            background-color: #4CAF50;
-            color: #fff;
-            border: 2px solid transparent;
-            border-radius: 5px;
-            font-size: 18px;
-            text-decoration: none;
-            text-align: center;
-            transition: all 0.3s ease-in-out;
-            cursor: pointer;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .button:hover {
-            background-color: #45a049;
-            border-color: #45a049;
+        .chart-container {
+            position: relative;
+            margin: auto;
+            width: 80%;
+            height: 400px;
         }
 
         .footer {
@@ -78,11 +60,126 @@
             padding: 20px;
             margin-top: 30px;
         }
+        
+        .home-btn {
+            display: block;
+            width: 100px;
+            margin: 20px auto;
+            padding: 8px 12px;
+            border-radius: 5px;
+            background-color: #007bff;
+            color: #fff;
+            text-align: center;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .home-btn:hover {
+            background-color: #0056b3;
+        }
     </style>
 </head>
 <body>
+    <div class="container">
+        <h1>Progress Page</h1>
 
-	<h1>Progress Page</h1>
+        <!-- Client Dropdown -->
+        <div class="dropdown">
+            <label for="clientSelect">Select Client:</label>
+            <select id="clientSelect" onchange="loadClientData()">
+                <option value="">Select a client</option>
 
+            </select>
+        </div>
+        
+        <!-- Weight Graph -->
+        <div class="sub-container">
+            <h2>Weight Over Time</h2>
+            <div class="chart-container">
+                <canvas id="weightChart"></canvas>
+            </div>
+        </div>
+
+        <!-- BMI Calculation -->
+        <div class="sub-container">
+            <h2>BMI</h2>
+            <p>Your BMI: <span id="bmiValue"></span></p>
+        </div>
+        
+        <a class="home-btn" href="/">Home</a>
+        
+		<div class="footer">
+        Developed by <a href="#">Group 5</a> | &copy; 2024 Fitness App
+    	</div>
+	</div>
+ 
+
+    <!-- JavaScript to populate client dropdown and update data -->
+    <script>
+        const clients = [
+            { id: 1, name: '1' },
+            { id: 2, name: '2' },
+            { id: 3, name: '3' }
+        ];
+
+        // Function to load client data when selected from dropdown
+        function loadClientData() {
+            const clientId = document.getElementById('clientSelect').value;
+            if (clientId !== '') {
+ 
+                const clientWeightData = [150, 155, 160, 158, 162, 163, 165];
+                const clientHeight = "74"; // Height in inches
+                const clientWeight = clientWeightData[clientWeightData.length - 1]; // Latest weight
+                const clientBMI = clientWeight / (clientHeight * clientHeight);
+                
+                // Display BMI value
+                document.getElementById('bmiValue').textContent = clientBMI.toFixed(2);
+
+                // Draw weight graph
+                const ctx = document.getElementById('weightChart').getContext('2d');
+                const weightChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
+                        datasets: [{
+                            label: 'Weight',
+                            data: clientWeightData,
+                            borderColor: 'blue',
+                            borderWidth: 1,
+                            fill: false
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            y: {
+                                beginAtZero: false
+                            }
+                        }
+                    }
+                });
+            } else {
+                // Clear weight graph and BMI when no client is selected
+                document.getElementById('bmiValue').textContent = '';
+                const ctx = document.getElementById('weightChart').getContext('2d');
+                const weightChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: [],
+                        datasets: []
+                    }
+                });
+            }
+        }
+
+        // Populate client dropdown options
+        const clientSelect = document.getElementById('clientSelect');
+        clients.forEach(client => {
+            const option = document.createElement('option');
+            option.value = client.id;
+            option.textContent = client.name;
+            clientSelect.appendChild(option);
+        });
+    </script>
+   
 </body>
 </html>
