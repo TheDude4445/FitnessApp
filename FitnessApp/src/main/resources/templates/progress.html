@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Add Weight and Height</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/adapters/moment.min.js"></script>
+    
         <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -80,110 +84,142 @@
             padding: 20px;
             margin-top: 30px;
         }
+        
+        .home-btn {
+            display: block;
+            width: 100px;
+            margin: 20px auto;
+            padding: 8px 12px;
+            border-radius: 5px;
+            background-color: #007bff;
+            color: #fff;
+            text-align: center;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .home-btn:hover {
+            background-color: #0056b3;
+        }
     </style>
     
 </head>
 <body>
-<div class="container">
-    <h1>Client Weight Over Time</h1>
-    <div>
-        <label for="clientId">Select Client:</label>
-		<select id="clientId" name="clientId" required>
-		    <option value="">Select Client</option>
-		    <!-- Iterate over existing clients and populate dropdown options -->
-		    <option th:each="client : ${clients}" th:value="${client.id}" th:text="${client.name}"></option>
-		</select>
-
+    <div class="container">
+        <h1>Weight</h1>
+        <div>
+            <label for="clientId">Select Client:</label>
+            <select id="clientId" name="clientId" required>
+                <option value="">Select Client</option>
+                <!-- Iterate over existing clients and populate dropdown options -->
+                <option th:each="client : ${clients}" th:value="${client.id}" th:text="${client.name}"></option>
+            </select>
+        </div>
+        <canvas id="weightChart"></canvas>
+        
+        <h1>Client BMI</h1>
+        <p>BMI is: ${clientID}</p>
+        <a class="home-btn" href="/">Home</a>
+        
+        <div class="footer">
+            Developed by <a href="#">Group 5</a> | &copy; 2024 Fitness App
+        </div>
     </div>
-    <canvas id="weightChart"></canvas>
-</div>
+
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Get reference to the canvas element
-    var ctx = document.getElementById('weightChart').getContext('2d');
-
-    // Initialize chart options
-    var options = {
-        responsive: true,
-        maintainAspectRatio: false,
-        scales: {
-            x: {
-                type: 'time',
-                time: {
-                    unit: 'day'
-                },
-                title: {
-                    display: true,
-                    text: 'Date'
-                }
+    document.addEventListener('DOMContentLoaded', function() {
+        // Manually configure Chart.js to use Moment.js for date parsing and formatting
+        Chart._adapters._date.override({
+            _id: 'moment',
+            formats: function() {
+                return moment().format();
             },
-            y: {
-                title: {
-                    display: true,
-                    text: 'Weight (lbs)'
-                }
+            parse: function(value) {
+                return moment(value, moment.ISO_8601);
+            },
+            format: function(date) {
+                return moment(date).format();
+            },
+            add: function(date, amount, unit) {
+                return moment(date).add(amount, unit).toDate();
+            },
+            diff: function(max, min, unit) {
+                return moment.duration(moment(max).diff(moment(min))).as(unit);
+            },
+            startOf: function(date, unit) {
+                return moment(date).startOf(unit).toDate();
+            },
+            endOf: function(date, unit) {
+                return moment(date).endOf(unit).toDate();
             }
-        }
-    };
+        });
 
-    // Initialize empty chart
-    var chart = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: [],
-            datasets: []
-        },
-        options: options
-    });
-
-
-function updateChart(clientId) {
-    // Make AJAX request to fetch weight and height data for the selected client
-    fetch('/getWeightHeightData?clientId=' + clientId)
-        .then(response => response.json())
-        .then(data => {
-            // Separate weight and height data from the fetched data
-            const weightData = data.weightData;
-            const heightData = data.heightData;
-
-            // Update chart data with fetched weight and height data
-            chart.data.labels = weightData.dates;
-            chart.data.datasets = [
-                {
+        var ctx = document.getElementById('weightChart').getContext('2d');
+        var myChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets: [{
                     label: 'Weight',
-                    data: weightData.weights,
+                    data: [],
                     borderColor: 'blue',
                     backgroundColor: 'rgba(0, 0, 255, 0.1)'
-                },
-                {
-                    label: 'Height',
-                    data: heightData.heights,
-                    borderColor: 'green',
-                    backgroundColor: 'rgba(0, 255, 0, 0.1)'
+                }]
+            },
+            options: {
+                scales: {
+                    x: {
+                        type: 'time',
+                        time: {
+                            unit: 'day'
+                        },
+                        title: {
+                            display: true,
+                            text: 'Date'
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Weight (lbs)'
+                        }
+                    }
                 }
-            ];
+            }
+        });
+        // Function to fetch data for the selected client and update the chart
+        function updateChartWithClientData(clientId) {
+        	fetch('/api/clientWeightHeightList/' + clientId)
+                .then(response => response.json())
+                .then(data => {
+                    // Extract dates and weights from the fetched data
+                    var dates = data.map(entry => entry.date);
+                    var weights = data.map(entry => entry.weight);
 
-            // Update the chart
-            chart.update();
-        })
-        .catch(error => console.error('Error fetching weight and height data:', error));
-}
+                    // Update chart data
+                    myChart.data.labels = dates;
+                    myChart.data.datasets[0].data = weights;
 
+                    // Update the chart
+                    myChart.update();
+                })
+                .catch(error => {
+                    console.error('Error fetching client weight data:', error);
+                });
+        }
+        
 
-    // Event listener for client selection change
-    document.getElementById('clientId').addEventListener('change', function() {
-        var clientId = this.value;
-        // Call updateChart function with selected client ID
-        updateChart(clientId);
+        // Event listener for client selection change
+        document.getElementById('clientId').addEventListener('change', function() {
+            var clientId = this.value;
+            if (clientId) {
+                updateChartWithClientData(clientId);
+            }
+        });
     });
-
-    // Initialize chart with default client
-    var defaultClientId = document.getElementById('clientId').value;
-    updateChart(defaultClientId);
-});
-
 </script>
+
 
 </body>
 </html>

@@ -12,6 +12,7 @@ import dmacc.repository.ClientRepository;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -365,8 +366,26 @@ public class FitnessController {
         model.addAttribute("clients", clients);
         return "progress";
     }
-
-
+    
+    @GetMapping("api/clientWeightHeightList/{clientId}")
+    public ResponseEntity<List<WeightBMI>> weightHeightApiController(@PathVariable Long clientId) {
+        // Retrieve the client by id from the repository
+        Client client = clientRepository.findById(clientId)
+                    .orElseThrow(() -> new IllegalArgumentException("Invalid client Id:" + clientId));
+        // Retrieve the list of WeightBMI objects for the specific client
+        List<WeightBMI> weightBMIs = weightBMIRepository.findByClient(client);
+        // Return the list of WeightBMI objects in JSON format
+        return ResponseEntity.ok(weightBMIs);
+    }
 
     
+//    @GetMapping("/weightHeightList/{clientId}")
+//    public ResponseEntity<List<WeightBMI>> showWeightHeightList(@PathVariable Long clientId) {
+//        Client client = clientRepository.findById(clientId)
+//            .orElseThrow(() -> new ResourceNotFoundException("Client not found with id: " + clientId));
+//        List<WeightBMI> weightBMIs = weightBMIRepository.findById(client);
+//        return ResponseEntity.ok(weightBMIs);
+//    }
+
+  
 }
