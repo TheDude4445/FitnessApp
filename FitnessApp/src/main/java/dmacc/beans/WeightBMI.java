@@ -5,6 +5,8 @@ import lombok.NoArgsConstructor;
 import jakarta.persistence.*;
 import java.time.LocalDate; // Import LocalDate from java.time package
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Data
 @NoArgsConstructor
 @Entity
@@ -16,6 +18,7 @@ public class WeightBMI {
     private Double feet; // in feet
     private Double inches; // in inches
     private LocalDate date; // Date variable
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "client_id")
     private Client client;

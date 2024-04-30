@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Progress</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/adapters/moment.min.js"></script>
+    
+        <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 30px;
+            background-color: #fff;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .button-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .button {
+            padding: 15px 30px;
+            background-color: #4CAF50;
+            color: #fff;
+            border: 2px solid transparent;
+            border-radius: 5px;
+            font-size: 18px;
+            text-decoration: none;
+            text-align: center;
+            transition: all 0.3s ease-in-out;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .button:hover {
+            background-color: #45a049;
+            border-color: #45a049;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 50px;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .footer a {
+            color: #666;
+            text-decoration: none;
+            transition: color 0.3s ease-in-out;
+        }
+
+        .footer a:hover {
+            color: #333;
+        }
+
+        .sub-container {
+            background-color: #f9f9f9;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 30px;
+        }
+        
+        .home-btn {
+            display: block;
+            width: 100px;
+            margin: 20px auto;
+            padding: 8px 12px;
+            border-radius: 5px;
+            background-color: #007bff;
+            color: #fff;
+            text-align: center;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .home-btn:hover {
+            background-color: #0056b3;
+        }
+    </style>
+    
+</head>
+<body>
+    <div class="container">
+        <h1>Weight</h1>
+        <div>
+            <label for="clientId">Select Client:</label>
+            <select id="clientId" name="clientId" required>
+                <option value="">Select Client</option>
+                <!-- Iterate over existing clients and populate dropdown options -->
+                <option th:each="client : ${clients}" th:value="${client.id}" th:text="${client.name}"></option>
+            </select>
+        </div>
+        <canvas id="weightChart"></canvas>
+        
+        <h1>BMI</h1>
+    	<p id="bmiDisplay">BMI is: </p>
+    	
+        <a class="home-btn" href="/">Home</a>
+        
+        <div class="footer">
+            Developed by <a href="#">Group 5</a> | &copy; 2024 Fitness App
+        </div>
+    </div>
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Manually configure Chart.js to use Moment.js for date parsing and formatting
+        Chart._adapters._date.override({
+            _id: 'moment',
+            formats: function() {
+                return moment().format();
+            },
+            parse: function(value) {
+                return moment(value, moment.ISO_8601);
+            },
+            format: function(date) {
+                return moment(date).format();
+            },
+            add: function(date, amount, unit) {
+                return moment(date).add(amount, unit).toDate();
+            },
+            diff: function(max, min, unit) {
+                return moment.duration(moment(max).diff(moment(min))).as(unit);
+            },
+            startOf: function(date, unit) {
+                return moment(date).startOf(unit).toDate();
+            },
+            endOf: function(date, unit) {
+                return moment(date).endOf(unit).toDate();
+            }
+        });
+
+        var ctx = document.getElementById('weightChart').getContext('2d');
+        var myChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets: [{
+                    label: 'Weight',
+                    data: [],
+                    borderColor: 'blue',
+                    backgroundColor: 'rgba(0, 0, 255, 0.1)'
+                }]
+            },
+            options: {
+                scales: {
+                    x: {
+                        type: 'time',
+                        time: {
+                            unit: 'day'
+                        },
+                        title: {
+                            display: true,
+                            text: 'Date'
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Weight (lbs)'
+                        }
+                    }
+                }
+            }
+        });
+        // Function to fetch data for the selected client and update the chart
+        function updateChartWithClientData(clientId) {
+        	fetch('/api/clientWeightHeightList/' + clientId)
+                .then(response => response.json())
+                .then(data => {
+                	//console.log(data);
+                	// Extract dates and weights from the fetched data
+                	var dates = data.map(entry => moment(entry.date).format('YYYY-MM-DD'));
+                	var weights = data.map(entry => entry.weight);
+
+                    // Update chart data
+                    myChart.data.labels = dates;
+                    myChart.data.datasets[0].data = weights;
+
+                    // Update the chart
+                    myChart.update();
+                })
+                .catch(error => {
+                    console.error('Error fetching client weight data:', error);
+                });
+        }
+        
+
+        // Event listener for client selection change
+        document.getElementById('clientId').addEventListener('change', function() {
+            var clientId = this.value;
+            if (clientId) {
+                updateChartWithClientData(clientId);
+            }
+        });
+    });
+    
+
+    // BMI Calculation
+    function calculateBMI(clientId) {
+        fetch('/api/clientWeightHeightList/' + clientId)
+            .then(response => response.json())
+            .then(data => {
+                // Calculate BMI using weight and height data
+                let weightBMI = data[0];
+                let weight = weightBMI.weight;
+                let heightInInches = weightBMI.feet * 12 + weightBMI.inches;
+                let heightInMeters = heightInInches * 0.0254; // Convert inches to meters
+                let bmi = weight / (heightInMeters * heightInMeters);
+
+                // Display calculated BMI on the page
+                document.getElementById('bmiDisplay').innerText = 'BMI is: ' + bmi.toFixed(2);
+            })
+            .catch(error => {
+                console.error('Error fetching client weight data:', error);
+            });
+    }
+
+    
+ // BMI Calculation
+    function calculateBMI(clientId) {
+        fetch('/api/clientWeightHeightList/' + clientId)
+            .then(response => response.json())
+            .then(data => {
+                // Calculate BMI using weight and height data
+                let weightBMI = data[0];
+                let weight = weightBMI.weight;
+                let heightInInches = weightBMI.feet * 12 + weightBMI.inches;
+                let heightInMeters = heightInInches * 0.0254; // Convert inches to meters
+                let bmi = weight / (heightInMeters * heightInMeters);
+
+                // Display calculated BMI on the page
+                document.getElementById('bmiDisplay').innerText = 'BMI is: ' + bmi.toFixed(2);
+            })
+            .catch(error => {
+                console.error('Error fetching client weight data:', error);
+            });
+    }
+
+    // Event listener for client selection change
+    document.getElementById('clientId').addEventListener('change', function() {
+        var clientId = this.value;
+        if (clientId) {
+            calculateBMI(clientId);
+        }
+    });
+</script>
+
+
+</body>
+</html>
+

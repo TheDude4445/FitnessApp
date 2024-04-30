@@ -116,6 +116,21 @@
 
 <main>
 
+<section id="workout-suggestions">
+    <h2>Workout Suggestions</h2>
+    <label for="clientWorkouts">Select Client:</label>
+    <select id="clientWorkouts" name="clientWorkouts" required>
+        <option value="">Select Client</option>
+        <!-- Populate dropdown with client names -->
+        <option th:each="client : ${clients}" th:value="${client.id}" th:text="${client.name}"></option>
+    </select>
+    
+    <h3>Suggested Workouts:</h3>
+    <!-- Display suggested workouts here -->
+    <ul id="suggestedWorkouts">
+    </ul>
+</section>
+
 <section id="chest">
     <h2>Chest Exercises</h2>
     <ul>
@@ -191,6 +206,51 @@
         Developed by <a href="#">Group 5</a> | &copy; 2024 Fitness App
     </div>
 </div>
+
+<!-- JavaScript code to suggest workouts based on client's history -->
+<script>
+    // Sample client workout history (replace with actual data)
+    const clientWorkouts = {
+        /* '1': ['lifting', 'lifting', 'cardio'],
+           '2': ['cardio', 'lifting', 'other'] */
+        // Add more client workouts as needed
+    };
+
+    // Function to suggest workouts based on client's history
+    function suggestWorkouts(clientId) {
+        const workouts = clientWorkouts[clientId] || [];
+        const suggestedWorkouts = {};
+
+        // Count occurrences of each workout type
+        workouts.forEach(workout => {
+            if (suggestedWorkouts[workout]) {
+                suggestedWorkouts[workout]++;
+            } else {
+                suggestedWorkouts[workout] = 1;
+            }
+        });
+
+        // Sort workout types by frequency
+        const sortedWorkouts = Object.keys(suggestedWorkouts).sort((a, b) => suggestedWorkouts[b] - suggestedWorkouts[a]);
+
+        // Display suggested workouts in dropdown
+        const dropdown = document.getElementById('suggestedWorkouts');
+        dropdown.innerHTML = '';
+        sortedWorkouts.forEach(workout => {
+            const option = document.createElement('li');
+            option.textContent = workout;
+            dropdown.appendChild(option);
+        });
+    }
+
+    // Event listener for client selection change
+    document.getElementById('clientWorkouts').addEventListener('change', function() {
+        var clientId = this.value;
+        if (clientId) {
+            suggestWorkouts(clientId);
+        }
+    });
+</script>
 
 </body>
 </html>

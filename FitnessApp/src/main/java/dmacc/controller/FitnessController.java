@@ -12,6 +12,7 @@ import dmacc.repository.ClientRepository;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -304,7 +305,7 @@ public class FitnessController {
         model.addAttribute("clients", clients);
         model.addAttribute("weightBMI", new WeightBMI());
         
-        return "addClientWeightHeight"; // Assuming you have a template called addClientWeightHeight.html
+        return "addClientWeightHeight";
     }
     
     @PostMapping("/addClientWeightHeight")
@@ -354,4 +355,33 @@ public class FitnessController {
         return "redirect:/weightHeightList";
     }
     
+    @GetMapping("/workouts")
+    public String showWorkoutsPage(Model model) {
+        return "workouts";
+    }
+
+    @GetMapping("/progress")
+    public String showProgressPage(Model model) {
+        List<Client> clients = clientRepository.findAll();
+        model.addAttribute("clients", clients);
+        return "progress";
+    }
+    
+    @GetMapping("api/clientWeightHeightList/{clientId}")
+    public ResponseEntity<List<WeightBMI>> weightHeightApiController(@PathVariable Long clientId) {
+        // Retrieve the client by id from the repository
+        Client client = clientRepository.findById(clientId)
+                    .orElseThrow(() -> new IllegalArgumentException("Invalid client Id:" + clientId));
+        // Retrieve the list of WeightBMI objects for the specific client
+        List<WeightBMI> weightBMIs = weightBMIRepository.findByClient(client);
+        // Return the list of WeightBMI objects in JSON format
+        return ResponseEntity.ok(weightBMIs);
+    }
+
+    @GetMapping("api/weightHeightList")
+    public ResponseEntity<List<WeightBMI>> weightHeightListApiController() {
+        List<WeightBMI> weightBMIs = weightBMIRepository.findAll();
+        return ResponseEntity.ok(weightBMIs);
+    }
+
 }
