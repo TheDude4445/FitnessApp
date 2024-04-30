@@ -367,6 +367,7 @@ public class FitnessController {
         return "progress";
     }
     
+
     @GetMapping("api/clientWeightHeightList/{clientId}")
     public ResponseEntity<List<WeightBMI>> weightHeightApiController(@PathVariable Long clientId) {
         // Retrieve the client by id from the repository
@@ -378,14 +379,5 @@ public class FitnessController {
         return ResponseEntity.ok(weightBMIs);
     }
 
-    
-//    @GetMapping("/weightHeightList/{clientId}")
-//    public ResponseEntity<List<WeightBMI>> showWeightHeightList(@PathVariable Long clientId) {
-//        Client client = clientRepository.findById(clientId)
-//            .orElseThrow(() -> new ResourceNotFoundException("Client not found with id: " + clientId));
-//        List<WeightBMI> weightBMIs = weightBMIRepository.findById(client);
-//        return ResponseEntity.ok(weightBMIs);
-//    }
 
-  
 }

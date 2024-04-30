@@ -193,9 +193,10 @@
         	fetch('/api/clientWeightHeightList/' + clientId)
                 .then(response => response.json())
                 .then(data => {
-                    // Extract dates and weights from the fetched data
-                    var dates = data.map(entry => entry.date);
-                    var weights = data.map(entry => entry.weight);
+                	console.log(data);
+                	// Extract dates and weights from the fetched data
+                	var dates = data.map(entry => moment(entry.date).format('YYYY-MM-DD'));
+                	var weights = data.map(entry => entry.weight);
 
                     // Update chart data
                     myChart.data.labels = dates;
