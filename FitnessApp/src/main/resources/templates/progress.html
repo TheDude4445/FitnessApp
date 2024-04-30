@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add Weight and Height</title>
+    <title>Progress</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
@@ -117,8 +117,9 @@
         </div>
         <canvas id="weightChart"></canvas>
         
-        <h1>Client BMI</h1>
-        <p>BMI is: ${clientID}</p>
+        <h1>BMI</h1>
+    	<p id="bmiDisplay">BMI is: </p>
+    	
         <a class="home-btn" href="/">Home</a>
         
         <div class="footer">
@@ -193,7 +194,7 @@
         	fetch('/api/clientWeightHeightList/' + clientId)
                 .then(response => response.json())
                 .then(data => {
-                	console.log(data);
+                	//console.log(data);
                 	// Extract dates and weights from the fetched data
                 	var dates = data.map(entry => moment(entry.date).format('YYYY-MM-DD'));
                 	var weights = data.map(entry => entry.weight);
@@ -218,6 +219,56 @@
                 updateChartWithClientData(clientId);
             }
         });
+    });
+    
+
+    // BMI Calculation
+    function calculateBMI(clientId) {
+        fetch('/api/clientWeightHeightList/' + clientId)
+            .then(response => response.json())
+            .then(data => {
+                // Calculate BMI using weight and height data
+                let weightBMI = data[0];
+                let weight = weightBMI.weight;
+                let heightInInches = weightBMI.feet * 12 + weightBMI.inches;
+                let heightInMeters = heightInInches * 0.0254; // Convert inches to meters
+                let bmi = weight / (heightInMeters * heightInMeters);
+
+                // Display calculated BMI on the page
+                document.getElementById('bmiDisplay').innerText = 'BMI is: ' + bmi.toFixed(2);
+            })
+            .catch(error => {
+                console.error('Error fetching client weight data:', error);
+            });
+    }
+
+    
+ // BMI Calculation
+    function calculateBMI(clientId) {
+        fetch('/api/clientWeightHeightList/' + clientId)
+            .then(response => response.json())
+            .then(data => {
+                // Calculate BMI using weight and height data
+                let weightBMI = data[0];
+                let weight = weightBMI.weight;
+                let heightInInches = weightBMI.feet * 12 + weightBMI.inches;
+                let heightInMeters = heightInInches * 0.0254; // Convert inches to meters
+                let bmi = weight / (heightInMeters * heightInMeters);
+
+                // Display calculated BMI on the page
+                document.getElementById('bmiDisplay').innerText = 'BMI is: ' + bmi.toFixed(2);
+            })
+            .catch(error => {
+                console.error('Error fetching client weight data:', error);
+            });
+    }
+
+    // Event listener for client selection change
+    document.getElementById('clientId').addEventListener('change', function() {
+        var clientId = this.value;
+        if (clientId) {
+            calculateBMI(clientId);
+        }
     });
 </script>
 

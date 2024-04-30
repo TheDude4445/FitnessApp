@@ -367,7 +367,6 @@ public class FitnessController {
         return "progress";
     }
     
-
     @GetMapping("api/clientWeightHeightList/{clientId}")
     public ResponseEntity<List<WeightBMI>> weightHeightApiController(@PathVariable Long clientId) {
         // Retrieve the client by id from the repository
@@ -379,5 +378,10 @@ public class FitnessController {
         return ResponseEntity.ok(weightBMIs);
     }
 
+    @GetMapping("api/weightHeightList")
+    public ResponseEntity<List<WeightBMI>> weightHeightListApiController() {
+        List<WeightBMI> weightBMIs = weightBMIRepository.findAll();
+        return ResponseEntity.ok(weightBMIs);
+    }
 
 }
